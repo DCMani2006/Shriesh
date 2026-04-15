@@ -336,11 +336,9 @@ function showEndGiftPrompt() {
 
     puzzleUI.classList.remove("hidden");
 
-    const openGiftFromPopup = document.getElementById("openGiftFromPopup");
-    openGiftFromPopup.addEventListener("click", () => {
-        puzzleUI.classList.add("hidden");
-        puzzleUI.innerHTML = "";
-
+    function openFinalVideo() {
+        finalVideo.preload = "auto";
+        finalVideo.load();
         finalVideo.classList.remove("hidden");
         closeVideoButton.classList.remove("hidden");
         finalButton.classList.remove("hidden");
@@ -349,11 +347,20 @@ function showEndGiftPrompt() {
         finalVideo.play().catch(() => {
             // Ignore autoplay restrictions; user can press play in controls.
         });
+    }
+
+    const openGiftFromPopup = document.getElementById("openGiftFromPopup");
+    openGiftFromPopup.addEventListener("click", () => {
+        puzzleUI.classList.add("hidden");
+        puzzleUI.innerHTML = "";
+        openFinalVideo();
     });
 }
 
 function initFinalRevealUI() {
     finalButton.addEventListener("click", () => {
+        finalVideo.preload = "auto";
+        finalVideo.load();
         finalVideo.classList.remove("hidden");
         closeVideoButton.classList.remove("hidden");
         finalButton.innerText = "replay tiny gift";
@@ -797,17 +804,32 @@ function lockForHeartGate() {
             heart.innerText = isDecoy ? "🖤" : "❤";
             heart.style.left = `${Math.random() * 84 + 4}%`;
             heart.style.top = `${Math.random() * 74 + 8}%`;
+            heart.style.padding = "0";
+            heart.style.margin = "0";
+            heart.style.zIndex = "2";
+            heart.style.pointerEvents = "auto";
+            heart.style.appearance = "none";
+            heart.style.webkitAppearance = "none";
             heart.dataset.decoy = String(isDecoy);
 
-            heart.addEventListener("click", () => {
+            heart.addEventListener("pointerenter", () => {
+                heart.classList.add("hovering");
+            });
+
+            heart.addEventListener("pointerleave", () => {
+                heart.classList.remove("hovering");
+            });
+
+            heart.addEventListener("pointerdown", (event) => {
+                event.preventDefault();
+
                 if (heart.classList.contains("caught")) return;
                 heart.classList.add("caught");
                 heart.style.pointerEvents = "none";
                 heart.style.opacity = "0.35";
 
                 if (heart.dataset.decoy === "true") {
-                    collected = Math.max(0, collected - 1);
-                    heartFeedback.innerText = "wrong heart... lost progress";
+                    heartFeedback.innerText = "that one was a decoy... keep going";
                 } else {
                     collected += 1;
                     score += 5;
@@ -836,7 +858,7 @@ function lockForHeartGate() {
         }
 
         heartMoveTimerId = setInterval(() => {
-            heartField.querySelectorAll(".heartItem:not(.caught)").forEach((item) => {
+            heartField.querySelectorAll(".heartItem:not(.caught):not(.hovering)").forEach((item) => {
                 const nextLeft = Math.random() * 84 + 4;
                 const nextTop = Math.random() * 74 + 8;
                 item.style.left = `${nextLeft}%`;

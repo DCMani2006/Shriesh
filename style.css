@@ -317,6 +317,10 @@ body {
     position: absolute;
     transform: translate(-50%, -50%);
     border: none;
+    padding: 0;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -328,6 +332,8 @@ body {
     font-size: 24px;
     line-height: 1;
     cursor: pointer;
+    pointer-events: auto;
+    z-index: 2;
     text-shadow: 0 0 8px rgba(255, 175, 209, 0.5);
     box-shadow: 0 0 10px rgba(255, 185, 216, 0.24);
     transition: transform 0.16s ease, left 0.45s ease, top 0.45s ease;
@@ -335,6 +341,11 @@ body {
 
 .heartItem:hover {
     transform: translate(-50%, -50%) scale(1.14);
+}
+
+.heartItem.hovering {
+    box-shadow: 0 0 14px rgba(255, 185, 216, 0.42);
+    transform: translate(-50%, -50%) scale(1.06);
 }
 
 .heartItem.decoy {
