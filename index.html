@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>for you</title>
+
+    <!-- LINK CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- MAIN GAME CONTAINER -->
+    <div id="game">
+        <!-- 🌙 WELCOME SCREEN -->
+        <div id="welcomeScreen">
+            <div class="welcomeGlowLayer" aria-hidden="true">
+                <span class="glowDot dot1"></span>
+                <span class="glowDot dot2"></span>
+                <span class="glowDot dot3"></span>
+                <span class="glowDot dot4"></span>
+                <span class="glowDot dot5"></span>
+                <span class="glowDot dot6"></span>
+            </div>
+            <div class="welcomeContent">
+                <h1>Hello Shriesh Kumar Jaiswal</h1>
+                <p>
+                    I made something for you<br><br>
+                    Take your time with it<br>
+                    Walk slowly<br>
+                    Use the arrow keys to move
+                </p>
+                <button id="startButton">begin</button>
+            </div>
+        </div>
+        <!-- CANVAS (WHERE EVERYTHING HAPPENS) -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- TEXT POPUP -->
+        <div id="textBox" class="hidden"></div>
+
+        <!-- PROGRESSION HUD -->
+        <div id="hud" class="hidden">
+            <div id="chapterBadge">chapter: prologue</div>
+            <div id="progressBadge">story: 0 / 0</div>
+            <div id="gateBadge">next: story begins</div>
+        </div>
+
+        <!-- PUZZLE UI -->
+        <div id="puzzleUI" class="hidden"></div>
+
+        <!-- FINAL BUTTON -->
+        <button id="finalButton" class="hidden">
+            a tiny gift for you
+        </button>
+
+        <!-- VIDEO -->
+        <video id="finalVideo" class="hidden" controls>
+            <source src="assets/video/final.mp4" type="video/mp4">
+        </video>
+        <button id="closeVideoButton" class="hidden">close video</button>
+
+    </div>
+
+    <!-- LINK JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
