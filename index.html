@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>for you</title>
+    <title>by Mrs. Jaiswal</title>
 
     <!-- LINK CSS -->
     <link rel="stylesheet" href="style.css">
@@ -25,7 +25,7 @@
             <div class="welcomeContent">
                 <h1>Hello Shriesh Kumar Jaiswal</h1>
                 <p>
-                    I made something for you<br><br>
+                    I made a little something<br><br>
                     Take your time with it<br>
                     Walk slowly<br>
                     Use the arrow keys to move
@@ -44,6 +44,20 @@
             <div id="chapterBadge">chapter: prologue</div>
             <div id="progressBadge">story: 0 / 0</div>
             <div id="gateBadge">next: story begins</div>
+            <div id="speedControls" class="hudControlPanel">
+                <div class="hudControlRow">
+                    <span>fox speed</span>
+                    <button id="foxSpeedDown" type="button">-</button>
+                    <span id="foxSpeedValue">2.5</span>
+                    <button id="foxSpeedUp" type="button">+</button>
+                </div>
+                <div class="hudControlRow">
+                    <span>story pace</span>
+                    <button id="storySpeedDown" type="button">-</button>
+                    <span id="storySpeedValue">1.0x</span>
+                    <button id="storySpeedUp" type="button">+</button>
+                </div>
+            </div>
         </div>
 
         <!-- PUZZLE UI -->
@@ -51,14 +65,14 @@
 
         <!-- FINAL BUTTON -->
         <button id="finalButton" class="hidden">
-            a tiny gift for you
+            a gift for you
         </button>
 
         <!-- VIDEO -->
         <video id="finalVideo" class="hidden" controls preload="none" playsinline>
             <source src="assets/video/final.mp4" type="video/mp4">
         </video>
-        <button id="closeVideoButton" class="hidden">close video</button>
+        <button id="closeVideoButton" class="hidden">close</button>
 
     </div>
 

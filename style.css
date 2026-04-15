@@ -34,7 +34,7 @@ body {
     min-width: 250px;
 }
 
-#hud div {
+#hud > div {
     padding: 9px 14px;
     border: 1px solid rgba(255, 235, 247, 0.4);
     border-radius: 999px;
@@ -45,6 +45,47 @@ body {
     backdrop-filter: blur(6px);
     box-shadow: 0 0 18px rgba(160, 255, 230, 0.15);
     animation: hudGlow 4s ease-in-out infinite;
+}
+
+.hudControlPanel {
+    border-radius: 18px;
+    padding: 10px 12px;
+}
+
+.hudControlRow {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.hudControlRow + .hudControlRow {
+    margin-top: 8px;
+}
+
+.hudControlRow span:last-of-type {
+    min-width: 44px;
+    text-align: center;
+    font-weight: 700;
+    color: #f5fff9;
+}
+
+.hudControlRow button {
+    width: 26px;
+    height: 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(220, 255, 245, 0.42);
+    background: rgba(12, 26, 30, 0.6);
+    color: #f2fff9;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.hudControlRow button:hover {
+    background: rgba(24, 46, 52, 0.74);
 }
 
 #textBox {

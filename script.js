@@ -10,6 +10,12 @@ const hud = document.getElementById("hud");
 const chapterBadge = document.getElementById("chapterBadge");
 const progressBadge = document.getElementById("progressBadge");
 const gateBadge = document.getElementById("gateBadge");
+const foxSpeedDown = document.getElementById("foxSpeedDown");
+const foxSpeedUp = document.getElementById("foxSpeedUp");
+const foxSpeedValue = document.getElementById("foxSpeedValue");
+const storySpeedDown = document.getElementById("storySpeedDown");
+const storySpeedUp = document.getElementById("storySpeedUp");
+const storySpeedValue = document.getElementById("storySpeedValue");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const startButton = document.getElementById("startButton");
@@ -60,6 +66,7 @@ let emojiGateSolved = false;
 let sequenceGateActive = false;
 let sequenceGateSolved = false;
 let sequenceTimerId = null;
+let currentSequencePattern = [];
 let obstacleGateActive = false;
 let obstacleGateSolved = false;
 let obstacleTimerId = null;
@@ -95,12 +102,20 @@ const EMOJI_GATE_TRIGGER_X = 5480;
 const EMOJI_QUESTION_SYMBOL = "🫶";
 const EMOJI_ANSWER = "3";
 const SEQUENCE_GATE_TRIGGER_X = 6460;
-const SEQUENCE_TIME_LIMIT = 20;
-const SEQUENCE_PATTERN = ["up", "right", "left", "up", "right"];
+const SEQUENCE_TIME_LIMIT = 12;
+const SEQUENCE_OPTIONS = ["up", "left", "right"];
+const SEQUENCE_LENGTH = 5;
 const OBSTACLE_GATE_TRIGGER_X = 7420;
 const OBSTACLE_TIME_LIMIT = 22;
 const OBSTACLE_TARGET = 180;
 const FINAL_REVEAL_TRIGGER_X = 9020;
+const FOX_SPEED_MIN = 1.2;
+const FOX_SPEED_MAX = 6.0;
+const FOX_SPEED_STEP = 0.2;
+const STORY_SPEED_MIN = 0.6;
+const STORY_SPEED_MAX = 1.8;
+const STORY_SPEED_STEP = 0.1;
+const BASE_ACCELERATION_RATIO = 0.06;
 // Spread the clue prompts across the route so they land during the story, not only at the ending.
 const PHYSICAL_LOCK_ZONES = [
     { min: 900, max: 1500 },
@@ -120,7 +135,7 @@ const PHYSICAL_LOCKS = [
     {
         id: "chocolateBrand",
         label: "chocolate brand",
-        question: "remember the brand of chocolate i bought you for valentine's?",
+        question: "remember the brand of chocolate you bought me for Valentine's?",
         type: "text",
         answer: "Amul",
         placeholder: "brand name"
@@ -128,7 +143,7 @@ const PHYSICAL_LOCKS = [
     {
         id: "petalCount",
         label: "petal count",
-        question: "how many petals were in the flower clue?",
+        question: "how many petals are there in the diary?",
         type: "number",
         answer: "9",
         min: 0,
@@ -178,6 +193,72 @@ function clearMovementInput() {
     keys.ArrowLeft = false;
     keys.ArrowUp = false;
     fox.dx = 0;
+}
+
+let foxSpeedSetting = 2.5;
+let storySpeedSetting = 1.0;
+
+function formatSpeedValue(value) {
+    return value.toFixed(1);
+}
+
+function getStoryTriggerX(baseX) {
+    if (storySpeedSetting >= 1) {
+        return baseX / storySpeedSetting;
+    }
+
+    const slowRatio = (1 - storySpeedSetting) / (1 - STORY_SPEED_MIN);
+    return baseX + (worldWidth - baseX) * slowRatio;
+}
+
+function applyFoxSpeedSetting() {
+    fox.speed = foxSpeedSetting;
+    fox.acceleration = BASE_ACCELERATION_RATIO * foxSpeedSetting;
+}
+
+function updateSpeedControlLabels() {
+    if (foxSpeedValue) {
+        foxSpeedValue.innerText = formatSpeedValue(foxSpeedSetting);
+    }
+
+    if (storySpeedValue) {
+        storySpeedValue.innerText = `${formatSpeedValue(storySpeedSetting)}x`;
+    }
+}
+
+function initSpeedControls() {
+    applyFoxSpeedSetting();
+    updateSpeedControlLabels();
+
+    if (foxSpeedDown) {
+        foxSpeedDown.addEventListener("click", () => {
+            foxSpeedSetting = Math.max(FOX_SPEED_MIN, foxSpeedSetting - FOX_SPEED_STEP);
+            applyFoxSpeedSetting();
+            updateSpeedControlLabels();
+        });
+    }
+
+    if (foxSpeedUp) {
+        foxSpeedUp.addEventListener("click", () => {
+            foxSpeedSetting = Math.min(FOX_SPEED_MAX, foxSpeedSetting + FOX_SPEED_STEP);
+            applyFoxSpeedSetting();
+            updateSpeedControlLabels();
+        });
+    }
+
+    if (storySpeedDown) {
+        storySpeedDown.addEventListener("click", () => {
+            storySpeedSetting = Math.max(STORY_SPEED_MIN, storySpeedSetting - STORY_SPEED_STEP);
+            updateSpeedControlLabels();
+        });
+    }
+
+    if (storySpeedUp) {
+        storySpeedUp.addEventListener("click", () => {
+            storySpeedSetting = Math.min(STORY_SPEED_MAX, storySpeedSetting + STORY_SPEED_STEP);
+            updateSpeedControlLabels();
+        });
+    }
 }
 
 const story = [
@@ -342,7 +423,7 @@ function showEndGiftPrompt() {
         finalVideo.classList.remove("hidden");
         closeVideoButton.classList.remove("hidden");
         finalButton.classList.remove("hidden");
-        finalButton.innerText = "replay tiny gift";
+        finalButton.innerText = "replay";
 
         finalVideo.play().catch(() => {
             // Ignore autoplay restrictions; user can press play in controls.
@@ -363,7 +444,7 @@ function initFinalRevealUI() {
         finalVideo.load();
         finalVideo.classList.remove("hidden");
         closeVideoButton.classList.remove("hidden");
-        finalButton.innerText = "replay tiny gift";
+        finalButton.innerText = "replay";
         finalVideo.play().catch(() => {
             // Ignore autoplay restrictions; user can press play in controls.
         });
@@ -623,13 +704,13 @@ function lockForSongGate() {
 
     puzzleUI.innerHTML = `
         <div class="puzzleCard">
-            <h3>unlock gate</h3>
+            <h3>Unlock Gate</h3>
             <p>
-                enter the timestamp when our lyrics begin in the official music video.
+                Enter the timestamp when our lyrics begin in the official music video of our song
             </p>
             <input id="songTimestampInput" type="text" placeholder="mm:ss" autocomplete="off" />
-            <button id="songTimestampSubmit" type="button">unlock path</button>
-            <button id="songTimestampSkip" type="button" class="puzzleSkipBtn">skip puzzle</button>
+            <button id="songTimestampSubmit" type="button">Unlock Path</button>
+            <button id="songTimestampSkip" type="button" class="puzzleSkipBtn">...</button>
             <div id="songTimestampFeedback" class="puzzleFeedback"></div>
         </div>
     `;
@@ -643,8 +724,8 @@ function lockForSongGate() {
     const expected = normalizeTimestamp(SONG_TIMESTAMP_ANSWER);
 
     function getHint() {
-        if (songGateAttempts < 2) return "that is not it yet... try again";
-        if (songGateAttempts < 3) return "hint: it starts in the early part of the song";
+        if (songGateAttempts < 2) return "that is not it yet ... try again";
+        if (songGateAttempts < 3) return "hint : It starts in the early part of the song";
         return "hint: use exact mm:ss format from the official video";
     }
 
@@ -1105,7 +1186,7 @@ function lockForEmojiGate() {
         if (attempts < 3) {
             emojiFeedback.innerText = "nope... think of my texting habit";
         } else {
-            emojiFeedback.innerText = "hint: it is more than 3 and less than 8";
+            emojiFeedback.innerText = "hint : it is more than 1 and less than 5";
         }
     }
 
@@ -1146,7 +1227,7 @@ function lockForSequenceGate() {
             <p>repeat this sequence before time runs out.</p>
             <div class="sequenceRow" id="sequenceRow"></div>
             <div class="platformStats">
-                <span id="sequenceProgress">0 / ${SEQUENCE_PATTERN.length}</span>
+                <span id="sequenceProgress">0 / ${SEQUENCE_LENGTH}</span>
                 <span id="sequenceTimer">${SEQUENCE_TIME_LIMIT}s</span>
             </div>
             <div class="sequenceInputRow">
@@ -1196,7 +1277,7 @@ function lockForSequenceGate() {
     function renderSequence(currentIndex) {
         sequenceRow.innerHTML = "";
 
-        SEQUENCE_PATTERN.forEach((dir, idx) => {
+        currentSequencePattern.forEach((dir, idx) => {
             const bubble = document.createElement("span");
             bubble.className = "sequenceBubble";
             bubble.innerText = dirSymbol(dir);
@@ -1210,27 +1291,40 @@ function lockForSequenceGate() {
         sequenceRetry.classList.add("hidden");
         sequenceFeedback.innerText = "";
 
+        const nextPattern = [];
+        for (let i = 0; i < SEQUENCE_LENGTH; i++) {
+            let nextChoice = SEQUENCE_OPTIONS[Math.floor(Math.random() * SEQUENCE_OPTIONS.length)];
+
+            while (i > 0 && nextChoice === nextPattern[i - 1]) {
+                nextChoice = SEQUENCE_OPTIONS[Math.floor(Math.random() * SEQUENCE_OPTIONS.length)];
+            }
+
+            nextPattern.push(nextChoice);
+        }
+
+        currentSequencePattern = nextPattern;
+
         let progress = 0;
         let timeLeft = SEQUENCE_TIME_LIMIT;
 
         renderSequence(progress);
-        sequenceProgress.innerText = `${progress} / ${SEQUENCE_PATTERN.length}`;
+        sequenceProgress.innerText = `${progress} / ${currentSequencePattern.length}`;
         sequenceTimer.innerText = `${timeLeft}s`;
 
         inputButtons.forEach((button) => {
             button.disabled = false;
             button.onclick = () => {
                 const choice = button.dataset.dir;
-                const expected = SEQUENCE_PATTERN[progress];
+                const expected = currentSequencePattern[progress];
 
                 if (choice === expected) {
                     progress += 1;
                     score += 6;
-                    sequenceProgress.innerText = `${progress} / ${SEQUENCE_PATTERN.length}`;
+                    sequenceProgress.innerText = `${progress} / ${currentSequencePattern.length}`;
                     renderSequence(progress);
                     sequenceFeedback.innerText = "good";
 
-                    if (progress >= SEQUENCE_PATTERN.length) {
+                    if (progress >= currentSequencePattern.length) {
                         clearSequenceRound();
                         sequenceGateSolved = true;
                         sequenceGateActive = false;
@@ -1246,7 +1340,7 @@ function lockForSequenceGate() {
                     }
                 } else {
                     progress = 0;
-                    sequenceProgress.innerText = `${progress} / ${SEQUENCE_PATTERN.length}`;
+                    sequenceProgress.innerText = `${progress} / ${currentSequencePattern.length}`;
                     renderSequence(progress);
                     sequenceFeedback.innerText = "wrong order... sequence reset";
                 }
@@ -1485,6 +1579,7 @@ document.addEventListener("keyup", (e) => {
 });
 
 initFinalRevealUI();
+initSpeedControls();
 
 // 🌱 UPDATE
 function update() {
@@ -1553,7 +1648,7 @@ if (fox.dx < -fox.speed) fox.dx = -fox.speed;
 
 // find the latest story point player has reached
 for (let i = 0; i < story.length; i++) {
-    if (fox.x > story[i].x) {
+    if (fox.x > getStoryTriggerX(story[i].x)) {
         newIndex = i;
     } else {
         break;
@@ -1569,15 +1664,6 @@ if (newIndex !== activeStoryIndex && newIndex !== -1) {
     textBox.innerText = message;
     textBox.classList.remove("hidden");
     textBox.classList.add("show");
-
-    // 🎯 emotional moments
-    if (message === "you cried") {
-        fox.speed = 1.2;
-    } else if (message === "and everything changed") {
-        fox.speed = 2.5;
-    } else {
-        fox.speed = 2.5;
-    }
 
     score += 10;
 
