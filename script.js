@@ -10,6 +10,10 @@ const hud = document.getElementById("hud");
 const chapterBadge = document.getElementById("chapterBadge");
 const progressBadge = document.getElementById("progressBadge");
 const gateBadge = document.getElementById("gateBadge");
+const startupGate = document.getElementById("startupGate");
+const startupPasswordInput = document.getElementById("startupPasswordInput");
+const startupUnlockButton = document.getElementById("startupUnlockButton");
+const startupFeedback = document.getElementById("startupFeedback");
 const foxSpeedDown = document.getElementById("foxSpeedDown");
 const foxSpeedUp = document.getElementById("foxSpeedUp");
 const foxSpeedValue = document.getElementById("foxSpeedValue");
@@ -20,6 +24,40 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const startButton = document.getElementById("startButton");
 const welcomeScreen = document.getElementById("welcomeScreen");
+const STARTUP_PASSWORD = "dcmsk_2026";
+
+function unlockStartupGate() {
+    document.body.classList.remove("startupLocked");
+    document.body.classList.add("startupUnlocked");
+    startupGate.classList.add("hidden");
+    startupFeedback.innerText = "";
+    startupPasswordInput.value = "";
+    startupPasswordInput.blur();
+    startButton.focus();
+}
+
+function submitStartupPassword() {
+    const enteredPassword = startupPasswordInput.value.trim();
+
+    if (enteredPassword === STARTUP_PASSWORD) {
+        unlockStartupGate();
+        return;
+    }
+
+    startupFeedback.innerText = "wrong password";
+    startupPasswordInput.value = "";
+    startupPasswordInput.focus();
+}
+
+if (startupUnlockButton && startupPasswordInput) {
+    startupUnlockButton.addEventListener("click", submitStartupPassword);
+    startupPasswordInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            submitStartupPassword();
+        }
+    });
+    startupPasswordInput.focus();
+}
 // 🌍 WORLD SETTINGS
 const worldWidth = 10000; // world is bigger than screen
 startButton.addEventListener("click", () => {

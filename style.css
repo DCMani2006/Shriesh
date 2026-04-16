@@ -14,6 +14,111 @@ body {
     font-family: "Trebuchet MS", "Verdana", sans-serif;
 }
 
+body.startupLocked #game {
+    visibility: hidden;
+}
+
+body.startupUnlocked #game {
+    visibility: visible;
+}
+
+.startupGate {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+        radial-gradient(circle at top, rgba(107, 238, 210, 0.16), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 183, 200, 0.18), transparent 32%),
+        linear-gradient(160deg, rgba(8, 16, 17, 0.96), rgba(15, 26, 28, 0.98));
+}
+
+.startupCard {
+    width: min(92vw, 460px);
+    padding: 28px 24px 26px;
+    border-radius: 24px;
+    border: 1px solid rgba(216, 255, 245, 0.28);
+    background: linear-gradient(145deg, rgba(19, 34, 39, 0.94), rgba(11, 20, 23, 0.96));
+    color: var(--mint);
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.44), 0 0 0 1px rgba(150, 255, 233, 0.08);
+}
+
+.startupKicker {
+    margin: 0 0 8px;
+    color: var(--rose);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.startupCard h1 {
+    margin: 0 0 10px;
+    font-size: clamp(30px, 4vw, 42px);
+    letter-spacing: 1px;
+    color: #f8fffd;
+}
+
+.startupCard p {
+    margin: 0 0 16px;
+    color: #d3f9ef;
+    line-height: 1.6;
+}
+
+.startupLabel {
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+    color: #dffef4;
+}
+
+.startupCard input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(165, 250, 229, 0.46);
+    background: rgba(6, 13, 15, 0.72);
+    color: #f3fffc;
+    font-size: 16px;
+    outline: none;
+}
+
+.startupCard input:focus {
+    border-color: rgba(255, 197, 222, 0.8);
+    box-shadow: 0 0 0 2px rgba(255, 179, 212, 0.2);
+}
+
+.startupCard button {
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 240, 247, 0.5);
+    border-radius: 999px;
+    cursor: pointer;
+    color: #fafffe;
+    background: linear-gradient(90deg, rgba(255, 172, 208, 0.42), rgba(113, 241, 205, 0.38));
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.startupCard button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 16px rgba(173, 255, 237, 0.28);
+    filter: brightness(1.05);
+}
+
+.startupFeedback {
+    min-height: 20px;
+    margin-top: 12px;
+    color: #ffd7e8;
+    font-size: 14px;
+}
+
 #game {
     position: relative;
     width: 100vw;

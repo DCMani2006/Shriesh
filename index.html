@@ -8,7 +8,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="startupLocked">
+
+    <!-- STARTUP PASSWORD GATE -->
+    <div id="startupGate" class="startupGate" role="dialog" aria-modal="true" aria-labelledby="startupTitle">
+        <div class="startupCard">
+            <p class="startupKicker">access locked</p>
+            <h1 id="startupTitle">enter password</h1>
+            <p>type the password to open the experience.</p>
+            <label class="startupLabel" for="startupPasswordInput">password</label>
+            <input id="startupPasswordInput" type="password" autocomplete="current-password" />
+            <button id="startupUnlockButton" type="button">unlock</button>
+            <div id="startupFeedback" class="startupFeedback" aria-live="polite"></div>
+        </div>
+    </div>
 
     <!-- MAIN GAME CONTAINER -->
     <div id="game">
