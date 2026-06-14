@@ -21,8 +21,8 @@ canvas.height = window.innerHeight;
 const startButton = document.getElementById("startButton");
 const welcomeScreen = document.getElementById("welcomeScreen");
 
-// 🌍 WORLD SETTINGS
-const worldWidth = 10000; // world is bigger than screen
+
+const worldWidth = 10000; 
 startButton.addEventListener("click", () => {
     welcomeScreen.style.display = "none";
     hud.classList.remove("hidden");
@@ -31,13 +31,13 @@ startButton.addEventListener("click", () => {
 const foxImage = new Image();
 
 foxImage.src = "assets/images/fox.png";
-// 🎥 CAMERA
+
 let cameraX = 0;
 let storyIndex = 0;
 let isShowingText = false;
 let activeStoryIndex = -1;
 let activeChapterIndex = -1;
-// 🌫️ mood control
+
 let mood = "neutral";
 const gates = [
     "next gate: song timestamp",
@@ -85,9 +85,9 @@ let checkpointReachedIndex = -1;
 let damageCooldownFrames = 0;
 let gameOverActive = false;
 
-// Replace these placeholders with your real answers before gifting.
+
 const SONG_TIMESTAMP_ANSWER = "0:15";
-// Gate 1 should appear right after Chapter 3 ends (around x:1500).
+
 const SONG_GATE_TRIGGER_X = 1580;
 const SONG_MAX_ATTEMPTS = 4;
 const SONG_LOCK_SECONDS = 10;
@@ -117,7 +117,7 @@ const STORY_SPEED_MIN = 0.6;
 const STORY_SPEED_MAX = 1.8;
 const STORY_SPEED_STEP = 0.1;
 const BASE_ACCELERATION_RATIO = 0.06;
-// Spread the clue prompts across the route so they land during the story, not only at the ending.
+
 const PHYSICAL_LOCK_ZONES = [
     { min: 900, max: 1500 },
     { min: 2600, max: 3400 },
@@ -427,7 +427,7 @@ function showEndGiftPrompt() {
         finalButton.innerText = "replay";
 
         finalVideo.play().catch(() => {
-            // Ignore autoplay restrictions; user can press play in controls.
+         
         });
     }
 
@@ -447,7 +447,7 @@ function initFinalRevealUI() {
         closeVideoButton.classList.remove("hidden");
         finalButton.innerText = "replay";
         finalVideo.play().catch(() => {
-            // Ignore autoplay restrictions; user can press play in controls.
+           
         });
     });
 
@@ -1594,8 +1594,7 @@ function update() {
         damageCooldownFrames -= 1;
     }
 
-    // LEFT / RIGHT
-    // Smooth movement
+    
 if (keys["ArrowRight"]) {
     fox.dx += fox.acceleration;
     fox.direction = "right";
@@ -1605,10 +1604,9 @@ else if (keys["ArrowLeft"]) {
     fox.direction = "left";
 }
 
-// Apply friction (slow down naturally)
 fox.dx *= fox.friction;
 
-// Limit max speed
+
 if (fox.dx > fox.speed) fox.dx = fox.speed;
 if (fox.dx < -fox.speed) fox.dx = -fox.speed;
 
@@ -1618,36 +1616,36 @@ if (fox.dx < -fox.speed) fox.dx = -fox.speed;
         fox.grounded = false;
     }
 
-    // GRAVITY
+    
     fox.dy += fox.gravity;
 
     fox.x += fox.dx;
     fox.y += fox.dy;
 
-    // GROUND
+    
     if (fox.y + fox.height >= canvas.height - 50) {
         fox.y = canvas.height - 50 - fox.height;
         fox.dy = 0;
         fox.grounded = true;
     }
 
-    // 🌍 WORLD BOUNDS (IMPORTANT)
+   
     if (fox.x < 0) fox.x = 0;
     if (fox.x + fox.width > worldWidth) {
         fox.x = worldWidth - fox.width;
     }
 
-    // 🎥 CAMERA FOLLOW
+    
     cameraX = fox.x - canvas.width / 2;
 
-    // Clamp camera
+    
     if (cameraX < 0) cameraX = 0;
     if (cameraX > worldWidth - canvas.width) {
         cameraX = worldWidth - canvas.width;
     }
     let newIndex = -1;
 
-// find the latest story point player has reached
+
 for (let i = 0; i < story.length; i++) {
     if (fox.x > getStoryTriggerX(story[i].x)) {
         newIndex = i;
@@ -1719,7 +1717,7 @@ if (fox.dx !== 0) {
     isShowingText = false;
 }
 }
-// 🌄 PARALLAX LAYERS
+
 
 const skyBirds = Array.from({ length: 11 }, (_, idx) => ({
     baseX: idx * 240 + Math.random() * 180,
@@ -1778,12 +1776,11 @@ function drawParallax() {
         ctx.fill();
     }
 
-    // Far mountain range.
+
     drawMountainBand(canvas.height - 250, 120, 240, 240, 0.14, "rgba(150, 194, 222, 0.26)", "rgba(47, 82, 104, 0.34)");
     // Mid mountain range.
     drawMountainBand(canvas.height - 210, 95, 200, 200, 0.24, "rgba(121, 168, 183, 0.28)", "rgba(32, 64, 77, 0.42)");
 
-    // Distant pine silhouette line.
     ctx.fillStyle = "rgba(23, 60, 66, 0.8)";
     for (let i = -2; i < 24; i++) {
         const x = i * 120 - cameraX * 0.36;
@@ -1796,7 +1793,7 @@ function drawParallax() {
         ctx.fill();
     }
 
-    // Near tree layer with trunks and canopies.
+
     for (let i = -2; i < 22; i++) {
         const x = i * 140 - cameraX * 0.62;
         const trunkH = 64 + ((i % 4) * 10);
@@ -1816,7 +1813,6 @@ function drawParallax() {
         ctx.fill();
     }
 
-    // Foreground shrub accents.
     ctx.fillStyle = "rgba(64, 132, 112, 0.7)";
     for (let i = -1; i < 28; i++) {
         const x = i * 96 - cameraX * 0.82;
@@ -1826,7 +1822,7 @@ function drawParallax() {
         ctx.fill();
     }
 
-    // Animated birds in sky.
+
     ctx.strokeStyle = "rgba(221, 246, 255, 0.75)";
     ctx.lineWidth = 1.6;
     skyBirds.forEach((bird) => {
@@ -1841,7 +1837,6 @@ function drawParallax() {
     });
 }
 
-// 🌿 DRAW BACKGROUND (simple layered feel)
 function drawBackground() {
     const worldProgress = Math.max(0, Math.min(1, fox.x / (worldWidth - fox.width)));
 
@@ -1892,7 +1887,7 @@ function drawBackground() {
     ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
 }
 
-// 🦊 DRAW FOX
+
 function drawFox() {
     ctx.save();
 
@@ -1924,7 +1919,7 @@ function drawFox() {
     ctx.restore();
 }
 
-// ✨ PARTICLES
+
 let particles = [];
 
 for (let i = 0; i < 60; i++) {
